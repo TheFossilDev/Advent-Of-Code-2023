@@ -27,47 +27,70 @@ zoneight234
 7pqrstsixteen
 
 '''
+# inputFile = open("Day1/input.txt", "r")
 inputFile = open("Day1/input.txt", "r")
 numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
-wordNumbers = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, 
-              "six": 6, "seven": 7, "eight": 8, "nine": 9}
+wordNumbers = {"one": "1", "two": "2", "three": "3", "four": "4", "five": "5", 
+              "six": "6", "seven": "7", "eight": "8", "nine": "9"}
 total = 0
 
-def extractDigit(line):
-  leftDigit = ""
-  rightDigit = ""
-  foundLeftDigit = False
-  for char in line:
-    # What's the best approach for type checking?
-    # I want to avoid a hard type check
-    if char in numbers:
-      if not foundLeftDigit:
-        foundLeftDigit = True
-        leftDigit = char
-        rightDigit = char
-      else:
-        rightDigit = char
-  lineSum = eval(leftDigit + rightDigit)
-  print(lineSum)
-  return lineSum
+# def extractDigit(line):
+#   leftDigit = ""
+#   rightDigit = ""
+#   foundLeftDigit = False
+#   for char in line:
+#     # What's the best approach for type checking?
+#     # I want to avoid a hard type check
+#     if char in numbers:
+#       if not foundLeftDigit:
+#         foundLeftDigit = True
+#         leftDigit = char
+#         rightDigit = char
+#       else:
+#         rightDigit = char
+#   lineSum = eval(leftDigit + rightDigit)
+#   print(lineSum)
+#   return lineSum
+def isLessThanLen(sA, sB, a, b):
+  return a < len(sA) and b < len(sB)
 
 def extractDigitTwo(line):
   leftDigit = ""
   rightDigit = ""
   foundLeftDigit = False
-  for char in line:
+  for i, char in enumerate(line):
     if char in numbers:
-      leftDigit = char
+      if not foundLeftDigit:
+        leftDigit = char
+        foundLeftDigit = True
       rightDigit = char
     else:
-      # Need to do a window slide for each of the possible word numbers (pain)
-      # A trie might speed this up
-      pass
+      # Try each word
+      for word in wordNumbers.keys():
+        j = i
+        wordI = 0
+        matchString = ""
+        while isLessThanLen(word, line, wordI, j) and word[wordI] == line[j]:
+          # They are matching
+          matchString += line[j]
+          if wordI == len(word)-1:
+            # They matched
+            print("Found", matchString)
+            rightDigit = wordNumbers[matchString]
+            if not foundLeftDigit:
+              leftDigit = wordNumbers[matchString]
+              foundLeftDigit = True
+          wordI += 1
+          j += 1
+  # End line
+  lineSum = eval(leftDigit + rightDigit)
+  print(lineSum)
+  return lineSum
 
 
 for line in inputFile:
-  # lineSum = extractDigit(inputFile)
-  lineSum = extractDigitTwo(inputFile)
+  # lineSum = extractDigit(line)
+  lineSum = extractDigitTwo(line)
   total += lineSum
 print("Total =", total)
 
